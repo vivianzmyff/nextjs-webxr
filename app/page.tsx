@@ -5,8 +5,13 @@
 // Import required components
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
+import { XR, createXRStore } from '@react-three/xr';
 import { Model as PottedPlant } from './components/PottedPlant';
 import { Cube } from './components/Cube';
+
+// Create XR store for managing AR/VR state
+// This store handles entering/exiting AR and VR modes
+const store = createXRStore();
 
 // Main homepage component that renders our 3D scene
 export default function Home() {
@@ -19,6 +24,11 @@ export default function Home() {
         camera prop sets the initial camera position [x, y, z]
       */}
       <Canvas camera={{ position: [5, 5, 5] }}>
+        {/* 
+          XR Component wraps all 3D content to enable AR/VR functionality
+          The store prop connects to our XR state management
+        */}
+        <XR store={store}>
         
         {/* 
           LIGHTING SETUP
@@ -93,6 +103,7 @@ export default function Home() {
           enableZoom={true}     // Allow zooming in/out
           enableRotate={true}   // Allow rotating around the scene
         />
+        </XR>
       </Canvas>
     </div>
   );

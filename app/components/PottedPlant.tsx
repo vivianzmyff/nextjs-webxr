@@ -40,6 +40,7 @@ export function Model(props: React.ComponentProps<'group'>) {
       {/* 
         The actual 3D mesh that renders the plant model
         This uses the geometry and materials loaded from the GLTF file
+        Enhanced with XR interaction capabilities
       */}
       <mesh 
         // Extract geometry from the loaded model
@@ -52,24 +53,32 @@ export function Model(props: React.ComponentProps<'group'>) {
         // Scale up the model (original might be very small)
         scale={100}
         
+        // XR INTERACTION SETTINGS
+        // Allow both clicking and grabbing for more immersive XR experience
+        pointerEventsType={{ allow: ['click', 'grab'] }}
+        
         // INTERACTION EVENTS
         // onClick: When user clicks the plant, trigger position randomization
         onClick={randomizePosition}
         
-        // onPointerOver: When mouse hovers over the plant
+        // onPointerOver: When mouse or XR controller hovers over the plant
         onPointerOver={(e) => {
           // Mark the object as hovered (useful for other effects)
           e.object.parent!.userData.hovered = true;
-          // Change cursor to pointer to indicate it's clickable
-          document.body.style.cursor = 'pointer';
+          // Change cursor to pointer to indicate it's clickable (for desktop users)
+          if (document.body) {
+            document.body.style.cursor = 'pointer';
+          }
         }}
         
-        // onPointerOut: When mouse leaves the plant
+        // onPointerOut: When mouse or XR controller leaves the plant
         onPointerOut={(e) => {
           // Remove hovered state
           e.object.parent!.userData.hovered = false;
-          // Reset cursor back to default
-          document.body.style.cursor = 'default';
+          // Reset cursor back to default (for desktop users)
+          if (document.body) {
+            document.body.style.cursor = 'default';
+          }
         }}
       />
     </group>

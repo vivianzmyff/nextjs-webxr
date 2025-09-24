@@ -45,7 +45,7 @@ export function Model(props: React.ComponentProps<'group'>) {
       <mesh 
         // Extract geometry from the loaded model
         // We cast to THREE.Mesh because our generic type doesn't know the specific node type
-        geometry={(nodes.Potted_Plant000 as THREE.Mesh).geometry} 
+        geometry={(nodes.Potted_Plant000 as unknown as THREE.Mesh).geometry} 
         
         // Use the material that came with the 3D model
         material={materials.Material} 
@@ -53,11 +53,8 @@ export function Model(props: React.ComponentProps<'group'>) {
         // Scale up the model (original might be very small)
         scale={100}
         
-        // XR INTERACTION SETTINGS
-        // Allow both clicking and grabbing for more immersive XR experience
-        pointerEventsType={{ allow: ['click', 'grab'] }}
-        
         // INTERACTION EVENTS
+        // onClick, onPointerOver, and onPointerOut work with both mouse and XR controllers
         // onClick: When user clicks the plant, trigger position randomization
         onClick={randomizePosition}
         

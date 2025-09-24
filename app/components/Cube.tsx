@@ -3,7 +3,6 @@
 // Now enhanced with XR interactions and visual feedback
 
 import React, { useState } from 'react';
-import * as THREE from 'three';
 
 // Define the Cube component as a function that accepts mesh properties
 // React.ComponentProps<'mesh'> means it accepts any props that a regular mesh would accept
@@ -47,9 +46,8 @@ export function Cube(props: React.ComponentProps<'mesh'>) {
     // {...props} spreads any props passed to this component onto the mesh
     <mesh 
       {...props}
-      // XR INTERACTION SETTINGS
-      // pointerEventsType allows fine control over how XR controllers interact
-      pointerEventsType={{ deny: 'grab' }} // Prevent grabbing but allow clicking
+      // INTERACTION EVENTS
+      // onClick, onPointerOver, and onPointerOut work with both mouse and XR controllers
       onClick={handleClick}
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}

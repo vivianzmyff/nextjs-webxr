@@ -7,7 +7,6 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
 import { XR, createXRStore } from '@react-three/xr';
 import { extendBatchedMeshPrototype } from '@three.ez/batched-mesh-extensions';
-import { Model as PottedPlant } from './components/PottedPlant';
 import { Cube } from './components/Cube';
 import { BatchedMeshExample } from './components/BatchedMeshExample';
 
@@ -75,8 +74,7 @@ export default function Home() {
         {/* Static orange cube positioned at the origin (0, 0, 0) */}
         <Cube />
         
-        {/* Interactive potted plant that can be clicked to teleport */}
-        <PottedPlant scale={10} />
+        {/* (Removed) Potted plant model */}
         
         {/* 
           BatchedMesh Example - Demonstrates performance optimization

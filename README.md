@@ -87,6 +87,24 @@ The project uses **ambientCG Metal049A** textures for the floor material. To use
 
 **Important**: Filenames are case-sensitive on Vercel. If textures are missing, check the browser console for warnings.
 
+### HDRIs (High Dynamic Range Images)
+The project supports both built-in environment presets and custom HDRI files for realistic sky and lighting:
+
+1. **Built-in Presets**: Use `SKY_MODE = 'preset'` in `app/page.tsx` to enable preset environments like "sunset", "dawn", "night", etc.
+
+2. **Custom HDRIs**: Use `SKY_MODE = 'custom'` and place HDR files in `/public/hdris/`:
+   - Example: `clear_noon_2k.hdr`
+   - Reference in code as: `/hdris/clear_noon_2k.hdr`
+   - **Recommended resolution**: 2K-4K for best quality/performance balance
+   - **Free sources**: [Poly Haven](https://polyhaven.com/hdris), [ambientCG](https://ambientcg.com/list?type=HDRI)
+
+3. **Toggle Sky Mode**: Change the `SKY_MODE` variable in `app/page.tsx`:
+   ```typescript
+   const SKY_MODE: 'preset' | 'custom' = 'preset' // or 'custom'
+   ```
+
+4. **Performance**: For mobile devices, add `resolution={256}` to the `<Environment>` component if needed.
+
 ## 🥽 WebXR Features
 
 This project now includes **WebXR** support for immersive experiences:

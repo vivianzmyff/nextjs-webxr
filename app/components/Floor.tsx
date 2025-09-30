@@ -4,7 +4,9 @@ import { useTexture } from '@react-three/drei'
 import { useMemo } from 'react'
 
 type Props = { size?: number; tileRepeat?: number }
-export default function Floor({ size = 160, tileRepeat = 8 }: Props) {
+export default function Floor({ size = 400, tileRepeat }: Props) {
+  // Auto-compute tileRepeat if not provided
+  const computedTileRepeat = tileRepeat ?? Math.round(size / 16)
   const gl = useThree((s) => s.gl)
   const maps = useTexture({
     map:          '/textures/snow/snow_field_aerial_col_4k.jpg',
@@ -20,7 +22,7 @@ export default function Floor({ size = 160, tileRepeat = 8 }: Props) {
   Object.values(maps).forEach((t) => {
     if (!t) return
     t.wrapS = t.wrapT = THREE.RepeatWrapping
-    t.repeat.set(tileRepeat, tileRepeat)
+    t.repeat.set(computedTileRepeat, computedTileRepeat)
     t.anisotropy = gl.capabilities.getMaxAnisotropy?.() ?? 8
   })
 

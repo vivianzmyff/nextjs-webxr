@@ -4,12 +4,14 @@
 
 // Import required components
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Grid } from '@react-three/drei';
+import { OrbitControls, Grid, ContactShadows } from '@react-three/drei';
+import * as THREE from 'three';
 import { XR, createXRStore } from '@react-three/xr';
 import { extendBatchedMeshPrototype } from '@three.ez/batched-mesh-extensions';
 import { BatchedMeshExample } from './components/BatchedMeshExample';
 import Floor from './components/Floor';
 import City from './components/City';
+import SkyController from './components/SkyController';
 import { KENNEY_HOUSES } from './lib/kenney';
 import { Suspense } from 'react';
 
@@ -21,6 +23,9 @@ extendBatchedMeshPrototype();
 // This store handles entering/exiting AR and VR modes
 const store = createXRStore();
 
+// Sky mode toggle - change this to switch between preset and custom HDRI
+const SKY_MODE: 'preset' | 'custom' = 'preset' // or 'custom'
+
 // Main homepage component that renders our 3D scene
 export default function Home() {
   return (
@@ -31,7 +36,7 @@ export default function Home() {
         It sets up WebGL context and handles rendering
         camera prop sets the initial camera position [x, y, z]
       */}
-      <Canvas camera={{ position: [5, 5, 5] }}>
+      <Canvas camera={{ position: [5, 5, 5] }} shadows>
         {/* 
           XR Component wraps all 3D content to enable AR/VR functionality
           The store prop connects to our XR state management
@@ -39,18 +44,37 @@ export default function Home() {
         <XR store={store}>
         
         {/* 
+          SCENE ATMOSPHERE
+          Fog and background color for grounded feel
+        */}
+        <fog attach="fog" args={['#cfd8e3', 120, 420]} />
+        <color attach="background" args={['#cfd8e3']} />
+        
+        {/* 
+          SKY AND ENVIRONMENT
+          SkyController provides environment lighting (background disabled to show fog)
+        */}
+        <SkyController mode={SKY_MODE} />
+        
+        {/* 
           LIGHTING SETUP
           We use multiple light sources to create depth and visual interest
         */}
         
         {/* Ambient light provides soft, overall illumination without direction */}
-        <ambientLight intensity={0.4} />
+        <ambientLight intensity={0.3} />
         
-        {/* Directional light simulates sunlight - comes from one direction */}
+        {/* Directional light simulates sunlight with proper shadow settings */}
         <directionalLight 
-          position={[10, 10, 5]}  // Position in 3D space [x, y, z]
-          intensity={1.0}         // How bright the light is
-          castShadow              // Enable this light to cast shadows
+          position={[30, 60, 30]}  // Position in 3D space [x, y, z]
+          intensity={1.2}          // How bright the light is
+          castShadow               // Enable this light to cast shadows
+          shadow-mapSize={[2048, 2048]}
+          shadow-camera-far={200}
+          shadow-camera-left={-80}
+          shadow-camera-right={80}
+          shadow-camera-top={80}
+          shadow-camera-bottom={-80}
         />
         
         {/* Point light radiates in all directions from a single point */}
@@ -75,11 +99,21 @@ export default function Home() {
         */}
         
         {/* Snow field aerial floor with realistic textures */}
-        <Floor size={160} tileRepeat={10} />
+        <Floor size={400} />
+        
+        {/* Contact shadows under buildings for grounding */}
+        <ContactShadows
+          position={[0, 0.001, 0]}
+          opacity={0.4}
+          scale={400}
+          blur={2.5}
+          far={30}
+          frames={1}
+        />
         
         {/* Kenney City - Scattered buildings across the floor */}
         <Suspense fallback={null}>
-          <City floorSize={160} cellSize={12} density={0.7} urls={KENNEY_HOUSES} roofColor="#6E6A8E" />
+          <City floorSize={400} cellSize={14} density={0.7} urls={KENNEY_HOUSES} roofColor="#6E6A8E" />
         </Suspense>
         
         {/* (Removed) Static orange cube */}
@@ -95,9 +129,9 @@ export default function Home() {
           - Slow ambient drift animation for dynamic movement
         */}
         <BatchedMeshExample 
-          areaSize={160} 
+          areaSize={400} 
           count={300} 
-          height={[20, 50]} 
+          height={[40, 80]} 
           scale={[1.8, 4.2]} 
         />
         

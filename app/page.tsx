@@ -9,6 +9,7 @@ import { XR, createXRStore } from '@react-three/xr';
 import { extendBatchedMeshPrototype } from '@three.ez/batched-mesh-extensions';
 import { Cube } from './components/Cube';
 import { BatchedMeshExample } from './components/BatchedMeshExample';
+import Floor from './components/Floor';
 
 // Extend BatchedMesh prototype with enhanced methods
 // This adds spatial indexing, per-instance uniforms, and LOD support
@@ -71,17 +72,21 @@ export default function Home() {
           These are our interactive 3D elements in the scene
         */}
         
+        {/* Snow field aerial floor with realistic textures */}
+        <Floor size={160} tileRepeat={10} />
+        
         {/* Static orange cube positioned at the origin (0, 0, 0) */}
         <Cube />
         
         {/* (Removed) Potted plant model */}
         
         {/* 
-          BatchedMesh Example - Demonstrates performance optimization
-          This renders 100 cubes efficiently using BatchedMesh with extensions:
-          - Spatial indexing (BVH) for faster raycasting and frustum culling
-          - Per-instance uniforms for unique shader properties
-          - Enhanced performance compared to individual mesh objects
+          Pastel-Blue Soft Plastic Clouds - Demonstrates MeshToonMaterial with gradients
+          This renders 50 cloud instances with candy-like appearance:
+          - MeshToonMaterial with pastel-blue colors for soft plastic look
+          - GradientTexture for smooth color transitions
+          - Smooth vertex normals and higher geometry detail
+          - Opaque material for candy appearance (no transparency)
         */}
         <BatchedMeshExample />
         

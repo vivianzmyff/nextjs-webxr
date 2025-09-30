@@ -44,6 +44,49 @@ A beginner-friendly project for learning **Next.js**, **React**, and **React Thr
 4. **Open your browser:**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
+## 🏃‍♂️ Running Locally
+
+### Quick Start
+```bash
+# Navigate to project directory
+cd ~/Documents/GitHub/nextjs-webxr
+
+# Install dependencies (uses npm with package-lock.json)
+npm install
+
+# Start development server
+npm run dev
+```
+
+### Requirements
+- **Node.js**: v18+ (tested with v22.19.0)
+- **Package Manager**: npm (uses package-lock.json)
+- **Port**: 3000 (automatically finds next available port if in use)
+
+### Texture Setup
+To enable the Metal049A floor textures, place these files in `/public/texture/Metal049A_1K-PNG/`:
+- `Metal049A_1K-PNG_Color.png`
+- `Metal049A_1K-PNG_Roughness.png` 
+- `Metal049A_1K-PNG_Metalness.png`
+- `Metal049A_1K-PNG_NormalGL.png`
+
+**Note**: Filenames are case-sensitive on Vercel. If textures are missing, the floor will render with a fallback gray material and show console warnings.
+
+## 📁 Assets
+
+### Textures
+The project uses **ambientCG Metal049A** textures for the floor material. To use these textures:
+
+1. **Download the textures** from [ambientCG](https://ambientcg.com/list?type=Material&category=Metal&sort=Popular)
+2. **Place the texture files** in `/public/texture/Metal049A_1K-PNG/` folder:
+   - `Metal049A_1K-PNG_Color.png`
+   - `Metal049A_1K-PNG_Roughness.png`
+   - `Metal049A_1K-PNG_Metalness.png`
+   - `Metal049A_1K-PNG_NormalGL.png`
+   - `Metal049A_1K-PNG_Displacement.png` (optional)
+
+**Important**: Filenames are case-sensitive on Vercel. If textures are missing, check the browser console for warnings.
+
 ## 🥽 WebXR Features
 
 This project now includes **WebXR** support for immersive experiences:

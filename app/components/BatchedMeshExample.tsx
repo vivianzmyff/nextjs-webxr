@@ -6,129 +6,107 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { InstancedMesh, SphereGeometry, MeshStandardMaterial, Object3D, DynamicDrawUsage } from 'three';
+import { InstancedMesh, SphereGeometry, MeshToonMaterial, Object3D, DynamicDrawUsage } from 'three';
+import { GradientTexture } from '@react-three/drei';
 
 // Aggressive cap to avoid huge GPU buffer reservations
 const MAX_INSTANCES = 2000;
 
-// Component that creates multiple clouds using InstancedMesh for better performance
+// Component that creates multiple pastel-blue soft plastic clouds
 export function BatchedMeshExample() {
-  const meshRef = useRef<InstancedMesh | null>(null);
-  const { scene } = useThree();
-  const [instanceCount] = useState(100); // Number of cloud instances to create
-
-  useEffect(() => {
-    // Guard against multiple creations on Fast Refresh
-    if (process.env.NODE_ENV !== 'production') {
-      // no-op: creation is already guarded by meshRef.current
-    }
-
-    // If mesh already exists, skip creating a new one
-    if (meshRef.current) return;
-
-    // Create cloud-like geometry with noise/distortion for fluffy appearance
-    const cloudGeometry = new SphereGeometry(1, 16, 16);
-    
-    // Apply noise/distortion to make the spheres look more cloud-like and fluffy
-    for (let i = 0; i < cloudGeometry.attributes.position.count; i++) {
-      cloudGeometry.attributes.position.setXYZ(
-        i,
-        cloudGeometry.attributes.position.getX(i) + (Math.random() - 0.5) * 0.5,
-        cloudGeometry.attributes.position.getY(i) + (Math.random() - 0.5) * 0.5,
-        cloudGeometry.attributes.position.getZ(i) + (Math.random() - 0.5) * 0.5
-      );
-    }
-    cloudGeometry.attributes.position.needsUpdate = true;
-
-    // Create cloud-like material with transparency and flat shading
-    const cloudMaterial = new MeshStandardMaterial({
-      color: 0xffffff,        // White color like real clouds
-      transparent: true,      // Enable transparency
-      opacity: 0.8,          // Semi-transparent like clouds
-      flatShading: true,     // Flat shading for more organic cloud appearance
-      fog: true              // Enable fog for atmospheric effect
-    });
-
-    // Cap the number of instances aggressively to avoid huge GPU buffer reservations
-    const count = Math.min(instanceCount, MAX_INSTANCES);
-    
-    // Create InstancedMesh (more memory-safe than BatchedMesh)
-    // InstancedMesh avoids the huge "reserved space" allocation that causes buffer overflow
-    const instanced = new InstancedMesh(cloudGeometry, cloudMaterial, count);
-    instanced.instanceMatrix.setUsage(DynamicDrawUsage);
-
-    // Randomize transforms for each cloud instance
-    const dummy = new Object3D();
-    for (let i = 0; i < count; i++) {
-      dummy.position.set(
-        (Math.random() - 0.5) * 40,  // Random X position (wider spread for clouds)
-        Math.random() * 10 + 5,      // Random Y position (higher up for clouds)
-        (Math.random() - 0.5) * 40   // Random Z position (wider spread for clouds)
-      );
-      dummy.rotation.set(
-        Math.random() * Math.PI,     // Random X rotation
-        Math.random() * Math.PI,     // Random Y rotation
-        Math.random() * Math.PI      // Random Z rotation for more natural cloud orientation
-      );
-      // Vary cloud sizes for more natural appearance
-      const cloudSize = 0.8 + Math.random() * 1.2; // Clouds between 0.8 and 2.0 scale
-      dummy.scale.setScalar(cloudSize);
-      dummy.updateMatrix();
-      instanced.setMatrixAt(i, dummy.matrix);
-    }
-    instanced.instanceMatrix.needsUpdate = true;
-
-    // Add to scene and store reference
-    scene.add(instanced);
-    meshRef.current = instanced;
-
-    console.log('Cloud InstancedMesh created with', count, 'instances (capped from', instanceCount, ')');
-
-    // Cleanup function to properly dispose resources
-    return () => {
-      if (meshRef.current) {
-        scene.remove(meshRef.current);
-        // Dispose the instanced mesh if it has a dispose method
-        if ('dispose' in meshRef.current && typeof meshRef.current.dispose === 'function') {
-          meshRef.current.dispose();
-        }
-        // Dispose geometry and material
-        cloudGeometry.dispose();
-        if (cloudMaterial.dispose) {
-          cloudMaterial.dispose();
-        }
-        meshRef.current = null;
-      }
-    };
-  }, [instanceCount, scene]);
+  const groupRef = useRef<THREE.Group>(null);
+  const [instanceCount] = useState(50); // Reduced count for better performance with individual meshes
 
   // Animation loop - gently drift the clouds
   useFrame((state) => {
-    if (meshRef.current) {
+    if (groupRef.current) {
       // Gentle rotation for cloud movement
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.05;
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.05;
       // Add subtle floating motion
-      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.5;
+      groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.5;
     }
   });
 
+  // Create cloud positions and sizes
+  const clouds = [];
+  for (let i = 0; i < instanceCount; i++) {
+    clouds.push({
+      position: [
+        (Math.random() - 0.5) * 40,  // Random X position (wider spread for clouds)
+        Math.random() * 10 + 5,      // Random Y position (higher up for clouds)
+        (Math.random() - 0.5) * 40   // Random Z position (wider spread for clouds)
+      ],
+      rotation: [
+        Math.random() * Math.PI,     // Random X rotation
+        Math.random() * Math.PI,     // Random Y rotation
+        Math.random() * Math.PI      // Random Z rotation for more natural cloud orientation
+      ],
+      scale: 0.8 + Math.random() * 1.2 // Clouds between 0.8 and 2.0 scale
+    });
+  }
+
   return (
-    <group>
+    <group ref={groupRef}>
       {/* 
-        InstancedMesh renders multiple cloud instances efficiently
-        Each cloud is a distorted sphere with noise for fluffy appearance
-        White, semi-transparent material with flat shading for realistic cloud look
-        Memory-safe approach that avoids huge GPU buffer reservations
+        Pastel-blue soft plastic clouds with MeshToonMaterial and gradient texture
+        Each cloud is a distorted sphere with smooth normals for candy-like appearance
+        Opaque material with gradient for soft plastic look
       */}
-      {meshRef.current && (
-        <primitive 
-          object={meshRef.current} 
-          frustumCulled={true}  // Enable frustum culling
-          castShadow={true}     // Enable shadow casting
-          receiveShadow={true}  // Enable shadow receiving
+      {clouds.map((cloud, index) => (
+        <CloudMesh
+          key={index}
+          position={cloud.position}
+          rotation={cloud.rotation}
+          scale={cloud.scale}
         />
-      )}
+      ))}
     </group>
+  );
+}
+
+// Individual cloud mesh component with gradient texture
+function CloudMesh({ position, rotation, scale }: {
+  position: [number, number, number];
+  rotation: [number, number, number];
+  scale: number;
+}) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  
+  // Create cloud-like geometry with higher detail for smooth normals
+  const cloudGeometry = new SphereGeometry(1, 32, 32);
+  
+  // Apply noise/distortion to make the spheres look more cloud-like and fluffy
+  for (let i = 0; i < cloudGeometry.attributes.position.count; i++) {
+    cloudGeometry.attributes.position.setXYZ(
+      i,
+      cloudGeometry.attributes.position.getX(i) + (Math.random() - 0.5) * 0.5,
+      cloudGeometry.attributes.position.getY(i) + (Math.random() - 0.5) * 0.5,
+      cloudGeometry.attributes.position.getZ(i) + (Math.random() - 0.5) * 0.5
+    );
+  }
+  cloudGeometry.attributes.position.needsUpdate = true;
+  
+  // Compute smooth vertex normals for better lighting
+  cloudGeometry.computeVertexNormals();
+
+  return (
+    <mesh
+      ref={meshRef}
+      position={position}
+      rotation={rotation}
+      scale={scale}
+      geometry={cloudGeometry}
+      castShadow
+      receiveShadow
+    >
+      <meshToonMaterial color="#B7DDF4">
+        <GradientTexture
+          stops={[0, 0.5, 1]}
+          colors={['#8EC9EA', '#B7DDF4', '#E6F6FF']}
+          size={64}
+        />
+      </meshToonMaterial>
+    </mesh>
   );
 }
 
@@ -161,8 +139,8 @@ export function PerformanceComparison() {
 function IndividualMeshes() {
   const meshes = [];
   
-  // Cap at 50 instances for performance comparison
-  const maxIndividualInstances = 50;
+  // Cap at 25 instances for performance comparison with gradient textures
+  const maxIndividualInstances = 25;
   
   for (let i = 0; i < maxIndividualInstances; i++) {
     const x = (Math.random() - 0.5) * 40;
@@ -170,16 +148,12 @@ function IndividualMeshes() {
     const z = (Math.random() - 0.5) * 40;
     
     meshes.push(
-      <mesh key={i} position={[x, y, z]}>
-        <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial 
-          color={0xffffff}
-          transparent={true}
-          opacity={0.8}
-          flatShading={true}
-          fog={true}
-        />
-      </mesh>
+      <CloudMesh
+        key={i}
+        position={[x, y, z]}
+        rotation={[Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI]}
+        scale={0.8 + Math.random() * 1.2}
+      />
     );
   }
   

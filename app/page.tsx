@@ -7,7 +7,6 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
 import { XR, createXRStore } from '@react-three/xr';
 import { extendBatchedMeshPrototype } from '@three.ez/batched-mesh-extensions';
-import { Cube } from './components/Cube';
 import { BatchedMeshExample } from './components/BatchedMeshExample';
 import Floor from './components/Floor';
 
@@ -75,20 +74,24 @@ export default function Home() {
         {/* Snow field aerial floor with realistic textures */}
         <Floor size={160} tileRepeat={10} />
         
-        {/* Static orange cube positioned at the origin (0, 0, 0) */}
-        <Cube />
+        {/* (Removed) Static orange cube */}
         
         {/* (Removed) Potted plant model */}
         
         {/* 
-          Pastel-Blue Soft Plastic Clouds - Demonstrates MeshToonMaterial with gradients
-          This renders 50 cloud instances with candy-like appearance:
+          Pastel-Blue Soft Plastic Clouds - Covers entire floor area
+          This renders 300 cloud instances with candy-like appearance:
           - MeshToonMaterial with pastel-blue colors for soft plastic look
-          - GradientTexture for smooth color transitions
-          - Smooth vertex normals and higher geometry detail
-          - Opaque material for candy appearance (no transparency)
+          - InstancedMesh for optimal performance with large cloud count
+          - Uniform distribution across floor area with elevated heights
+          - Slow ambient drift animation for dynamic movement
         */}
-        <BatchedMeshExample />
+        <BatchedMeshExample 
+          areaSize={160} 
+          count={300} 
+          height={[12, 40]} 
+          scale={[1.8, 4.2]} 
+        />
         
         {/* 
           SCENE HELPERS

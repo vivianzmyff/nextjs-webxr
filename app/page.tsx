@@ -6,8 +6,14 @@
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
 import { XR, createXRStore } from '@react-three/xr';
+import { extendBatchedMeshPrototype } from '@three.ez/batched-mesh-extensions';
 import { Model as PottedPlant } from './components/PottedPlant';
 import { Cube } from './components/Cube';
+import { BatchedMeshExample } from './components/BatchedMeshExample';
+
+// Extend BatchedMesh prototype with enhanced methods
+// This adds spatial indexing, per-instance uniforms, and LOD support
+extendBatchedMeshPrototype();
 
 // Create XR store for managing AR/VR state
 // This store handles entering/exiting AR and VR modes
@@ -71,6 +77,15 @@ export default function Home() {
         
         {/* Interactive potted plant that can be clicked to teleport */}
         <PottedPlant scale={10} />
+        
+        {/* 
+          BatchedMesh Example - Demonstrates performance optimization
+          This renders 100 cubes efficiently using BatchedMesh with extensions:
+          - Spatial indexing (BVH) for faster raycasting and frustum culling
+          - Per-instance uniforms for unique shader properties
+          - Enhanced performance compared to individual mesh objects
+        */}
+        <BatchedMeshExample />
         
         {/* 
           SCENE HELPERS

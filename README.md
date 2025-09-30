@@ -11,6 +11,7 @@ A beginner-friendly project for learning **Next.js**, **React**, and **React Thr
 | **React Three Fiber** | React renderer for Three.js | Latest |
 | **@react-three/drei** | Useful helpers for R3F (OrbitControls, Grid, etc.) | Latest |
 | **@react-three/xr** | WebXR support for AR/VR experiences | Latest |
+| **@three.ez/batched-mesh-extensions** | Enhanced BatchedMesh with BVH, per-instance uniforms, and LOD | Latest |
 | **Three.js** | 3D graphics library | Latest |
 | **TypeScript** | Static type checking | ^5 |
 | **Tailwind CSS** | Utility-first CSS framework | ^4 |
@@ -62,6 +63,7 @@ This project now includes **WebXR** support for immersive experiences:
 ### **Interactive Elements**
 - **Cube**: Changes colors when clicked/tapped
 - **Potted Plant**: Teleports to random positions when interacted with
+- **BatchedMesh Example**: 100 rotating cubes demonstrating performance optimization
 - **Grid Floor**: Provides spatial reference in both AR and VR modes
 
 ## 🎨 Customization Ideas
@@ -72,8 +74,12 @@ Students can extend this project by:
 2. **Animation**: Use `useFrame` for continuous animations
 3. **Physics**: Integrate `@react-three/cannon` for physics simulation
 4. **Advanced WebXR**: Add hand tracking, anchors, and spatial mapping
-5. **UI Overlays**: Create HTML overlays on top of the 3D scene
-6. **Sound**: Add spatial audio with `@react-three/drei` audio components
+5. **Performance Optimization**: Use BatchedMesh for rendering many similar objects
+6. **Spatial Indexing**: Implement BVH for faster raycasting and frustum culling
+7. **Per-Instance Uniforms**: Add unique shader properties to individual instances
+8. **Level of Detail (LOD)**: Implement distance-based detail reduction
+9. **UI Overlays**: Create HTML overlays on top of the 3D scene
+10. **Sound**: Add spatial audio with `@react-three/drei` audio components
 
 ## 🚀 Deployment to Vercel
 
@@ -110,3 +116,8 @@ Students can extend this project by:
 - [WebXR Device API](https://developer.mozilla.org/en-US/docs/Web/API/WebXR_Device_API)
 - [React Three XR](https://github.com/pmndrs/xr) - WebXR for React Three Fiber
 - [WebXR First Steps React](https://www.youtube.com/watch?v=Q7Bx5kR7B_4) - Meta Quest tutorial
+
+### Performance Optimization Resources
+- [BatchedMesh Extensions](https://github.com/agargaro/batched-mesh-extensions) - Enhanced BatchedMesh with BVH and LOD
+- [Three.js InstancedMesh](https://threejs.org/docs/#api/en/objects/InstancedMesh) - Official Three.js documentation
+- [Performance Best Practices](https://discoverthreejs.com/tips-and-tricks/) - Three.js performance tips

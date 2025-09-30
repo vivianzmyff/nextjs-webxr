@@ -9,6 +9,9 @@ import { XR, createXRStore } from '@react-three/xr';
 import { extendBatchedMeshPrototype } from '@three.ez/batched-mesh-extensions';
 import { BatchedMeshExample } from './components/BatchedMeshExample';
 import Floor from './components/Floor';
+import City from './components/City';
+import { KENNEY_HOUSES } from './lib/kenney';
+import { Suspense } from 'react';
 
 // Extend BatchedMesh prototype with enhanced methods
 // This adds spatial indexing, per-instance uniforms, and LOD support
@@ -74,6 +77,11 @@ export default function Home() {
         {/* Snow field aerial floor with realistic textures */}
         <Floor size={160} tileRepeat={10} />
         
+        {/* Kenney City - Scattered buildings across the floor */}
+        <Suspense fallback={null}>
+          <City floorSize={160} cellSize={12} density={0.7} urls={KENNEY_HOUSES} roofColor="#6E6A8E" />
+        </Suspense>
+        
         {/* (Removed) Static orange cube */}
         
         {/* (Removed) Potted plant model */}
@@ -89,7 +97,7 @@ export default function Home() {
         <BatchedMeshExample 
           areaSize={160} 
           count={300} 
-          height={[12, 40]} 
+          height={[20, 50]} 
           scale={[1.8, 4.2]} 
         />
         
